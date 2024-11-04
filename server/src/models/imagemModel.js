@@ -7,19 +7,19 @@ import db from '../conexao.js';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export async function createImagem(descricao,nomeImg,imagem) {
+export async function createImagem(descricao, nomeImg, imagem) {
     const conexao = mysql.createPool(db);
     console.log('ImagemModel :: createImagem');
     const sql = 'INSERT INTO imagens (descricao,caminho) VALUES (?,?);';
-    const params = [descricao,nomeImg];
+    const params = [descricao, nomeImg];
 
     try {
-        await imagem.mv(path.join(__dirname,'..','..','public','img',nomeImg));
-        const [retorno] = await conexao.query(sql,params);
-        return [201,'Imagem Cadastrada'];
+        await imagem.mv(path.join(__dirname, '..', '..', 'public', 'img', nomeImg));
+        const [retorno] = await conexao.query(sql, params);
+        return [201, 'Imagem Cadastrada'];
     } catch (error) {
         console.log(error);
-        return [500,error];
+        return [500, error];
     }
 }
 
@@ -30,60 +30,63 @@ export async function readImagem() {
 
     try {
         const [retorno] = await conexao.query(sql);
-        return [200,retorno];
+        return [200, retorno];
     } catch (error) {
         console.log(error);
-        return [500,error];
-        
+        return [500, error];
+
     }
-    
+
 }
 
-export async function updateImagem(descricao,id_imagem) {
+export async function updateImagem(descricao, id_imagem) {
     const conexao = mysql.createPool(db);
     console.log('ImagemModel :: updateImagem');
     const sql = 'UPDATE imagens SET descricao=? WHERE id_imagem = ?;';
     const params = [descricao, id_imagem];
 
     try {
-        const [retorno] = await conexao.query(sql,params);
+        const [retorno] = await conexao.query(sql, params);
 
         if (retorno.affectedRows < 1) {
-            return [404,{message:'Imagem não encontrada!'}];
-            
+            return [404, { message: 'Imagem não encontrada!' }];
+
         }
-        return[200,{message:'Imagem atualizada!'}]
+        return [200, { message: 'Imagem atualizada!' }]
     } catch (error) {
         console.log(error);
-        return[500,error];
-        
+        return [500, error];
+
     }
-    
+
 }
 
 export async function deleteImagem(id_imagem) {
     console.log('ImagemModel ::deleteImagem')
     const conexao = mysql.createPool(db);
-
+    const sqlImagem = 'SELECT * FROM imagens WHERE id_imagem=?'
     const sql = 'DELETE FROM imagens WHERE id_imagem=?';
     const params = [id_imagem];
 
     try {
-        const [retorno] = await conexao.query(sql,params);
-
-        if (retorno.affectedRows < 1) {
-            return [404,{message:'Imagem não encontrada!'}];
-            
+        const [imagem] = await conexao.query(sqlImagem, params);
+        if (imagem.lenght > 0) {
+            const nomeImg = imagem[0].caminho;
+            await conexao.query(sql, params);
+            await fs.unlink(path.join(__dirname, '..', '..', 'public', 'img', nomeImg));
+            return [200, { message: 'Imagem deletada' }];
+        } else {
+            return [404, { message: 'Imagem não encontrada' }];
         }
-        return[200,{message:'Imagem deletada!'}]
+
+
+
     } catch (error) {
         console.log(error);
-        return[500,error];
-        
-    }
-    
+        return [500, error];
 
-    
+    }
+
 }
 
 export async function showOneImagem(id_imagem) {

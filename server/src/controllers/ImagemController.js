@@ -67,7 +67,7 @@ export async function editarImagem(req,res) {
     
 }
 
-export async function mostrarImagem(req,res) {
+export async function downloadImagem(req,res) {
     console.log('ImagemController :: Mostrando Imagem');
 
     const {nomeImg} = req.params;
@@ -111,6 +111,6 @@ export async function mostrarUmaImagem(req, res) {
         res.status(status).json(resposta);
     } catch (error) {
         console.log(error);
-        res.status(500).json(error);
+        res.status(500).json({message:'ImagemController :: Erro'});
     }
 }
