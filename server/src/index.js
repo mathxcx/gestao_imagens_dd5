@@ -3,6 +3,7 @@ import fileUpload from 'express-fileupload';
 import cors from 'cors';
 import {apagarImagem, criarImagem, downloadImagem, editarImagem, mostrarImagens, mostrarUmaImagem} from './controllers/ImagemController.js'
 
+
 const app = express();
 const porta = 5000;
 
