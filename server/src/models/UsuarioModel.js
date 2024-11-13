@@ -44,7 +44,7 @@ export async function showOneUsuario(id_usuario) {
     console.log('UsuarioModel :: showOneUsuario');
     const conexao = mysql.createPool(db);
 
-    const sql = 'SELECT * FROM usuarios WHERE id_usuarios = ?';
+    const sql = 'SELECT * FROM usuarios WHERE id_usuario = ?';
     const params = [id_usuario];
 
     try {
